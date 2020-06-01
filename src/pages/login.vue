@@ -51,10 +51,15 @@
 
 <script>
   import axios from 'axios'
+  import qs from 'qs'
   const myLoginRoutine = user => new Promise ((resolve, reject) => {
-    axios({url: 'auth', data: user, method: 'POST' })
-      .then(resp => {
+    axios({
+      method: 'POST',
+      url: 'https://localhost:44358/token',
+      data: qs.stringify(user)
+    }).then(resp => {
         const token = resp.data.token
+        console.log(token)
         localStorage.setItem('user-token', token) // store the token in localstorage
         resolve(resp)
       })
@@ -69,14 +74,15 @@
     data() {
       return {
         username: '',
-        password: ''
+        password: '',
+        grant_type: 'password'
       }
     },
     methods: {
       login() {
-          const { username, password } = this
-          myLoginRoutine({ username, password }).then(() => {
-            this.$router.push('/')
+          const { username, password, grant_type} = this
+          myLoginRoutine({ username, password, grant_type }).then(() => {
+            this.$router.push('/dashboard')
           })
       }
     },
